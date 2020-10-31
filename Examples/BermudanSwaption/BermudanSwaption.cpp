@@ -49,7 +49,7 @@ using namespace QuantLib;
 #if defined(QL_ENABLE_SESSIONS)
 namespace QuantLib {
 
-    Integer sessionId() { return 0; }
+    ThreadKey sessionId() { return 0; }
 
 }
 #endif
@@ -60,7 +60,7 @@ namespace QuantLib {
 Size numRows = 5;
 Size numCols = 5;
 
-Integer swapLenghts[] = {
+Integer swapLengths[] = {
       1,     2,     3,     4,     5};
 Volatility swaptionVols[] = {
   0.1490, 0.1340, 0.1228, 0.1189, 0.1148,
@@ -71,8 +71,9 @@ Volatility swaptionVols[] = {
 
 void calibrateModel(
           const ext::shared_ptr<ShortRateModel>& model,
-          const std::vector<ext::shared_ptr<BlackCalibrationHelper> >& helpers) {
+          const std::vector<ext::shared_ptr<BlackCalibrationHelper> >& swaptions) {
 
+    std::vector<ext::shared_ptr<CalibrationHelper> > helpers(swaptions.begin(), swaptions.end());
     LevenbergMarquardt om;
     model->calibrate(helpers, om,
                      EndCriteria(400, 100, 1.0e-8, 1.0e-8, 1.0e-8));
@@ -81,12 +82,12 @@ void calibrateModel(
     for (Size i=0; i<numRows; i++) {
         Size j = numCols - i -1; // 1x5, 2x4, 3x3, 4x2, 5x1
         Size k = i*numCols + j;
-        Real npv = helpers[i]->modelValue();
-        Volatility implied = helpers[i]->impliedVolatility(npv, 1e-4,
-                                                           1000, 0.05, 0.50);
+        Real npv = swaptions[i]->modelValue();
+        Volatility implied = swaptions[i]->impliedVolatility(npv, 1e-4,
+                                                             1000, 0.05, 0.50);
         Volatility diff = implied - swaptionVols[k];
 
-        std::cout << i+1 << "x" << swapLenghts[j]
+        std::cout << i+1 << "x" << swapLengths[j]
                   << std::setprecision(5) << std::noshowpos
                   << ": model " << std::setw(7) << io::volatility(implied)
                   << ", market " << std::setw(7)
@@ -183,7 +184,7 @@ int main(int, char* []) {
             ext::shared_ptr<Quote> vol(new SimpleQuote(swaptionVols[k]));
             swaptions.push_back(ext::shared_ptr<BlackCalibrationHelper>(new
                 SwaptionHelper(swaptionMaturities[i],
-                               Period(swapLenghts[j], Years),
+                               Period(swapLengths[j], Years),
                                Handle<Quote>(vol),
                                indexSixMonths,
                                indexSixMonths->tenor(),

@@ -1,82 +1,79 @@
-
-Changes for QuantLib 1.16:
+Changes for QuantLib 1.20:
 ==========================
 
-QuantLib 1.16 includes 34 pull requests from several contributors.
+QuantLib 1.20 includes 24 pull requests from several contributors.
 
 The most notable changes are included below.
 A detailed list of changes is available in ChangeLog.txt and at
-<https://github.com/lballabio/QuantLib/milestone/12?closed=1>.
+<https://github.com/lballabio/QuantLib/milestone/16?closed=1>.
 
 Portability
 -----------
 
-- Added support for Visual Studio 2019 (thanks to Paul Giltinan).
+- Support for Visual C++ 2012 is being deprecated.  It will be dropped
+  after the next release in order to enable use of C++11 features.
 
-Configuration
--------------
+- It is now possible to opt into using `std::tuple` instead of
+  `boost::tuple` when the compiler allows it.  The default is still to
+  use the Boost implementation.  The feature can be enabled by
+  uncommenting the `QL_USE_STD_TUPLE` macro in `ql/userconfig.hpp` on
+  Visual C++ or by passing the `--enable-std-tuple` switch to
+  `./configure` on other systems.  The `--enable-std-tuple` switch is
+  also implied by `--enable-std-classes`.  (Thanks to Joseph Wang.)
 
-- As announced in past release, the compile-time switch to force
-  non-negative rates was removed.
+Instruments
+-----------
 
-Pricing engines
----------------
+- Added mixing-factor parameter to Heston finite-differences barrier,
+  rebate and double-barrier engines (thanks to Jack Gillett).
 
-- Added constant elasticity of variance (CEV) pricing engines for
-  vanilla options.  Analytic, FD and SABR engines are available
-  (thanks to Klaus Spanderen).
+- Added a few additional results to Black swaption engine and to
+  analytic European option engine (thanks to Peter Caspers and Marcin
+  Rybacki).
 
-- Added quanto pricing functionality to a couple of FD engines for
-  DividendVanillaOption (thanks to Klaus Spanderen).
+- Improved calculation of spot date for vanilla swap around holidays
+  (thanks to Paul Giltinan).
 
-Cash flows
-----------
+- Added ex-coupon feature to amortizing bonds, callable bonds and
+  convertible bonds.
 
-- Digital coupons can now optionally return the value of the naked
-  option (thanks to Peter Caspers).
+- Added optional first-coupon day counter to fixed-rate bonds (thanks
+  to Jacob Lee-Howes).
+
+Math
+----
+
+- Added convenience classes `LogCubic` and `LogMixedLinearCubic`
+  hiding a few default parameters (thanks to Andrea Maffezzoli).
+
+Models
+------
+
+- Added control variate based on asymptotic expansion for the Heston
+  model (thanks to Klaus Spanderen).
 
 Date/time
 ---------
 
-- Updated Taiwan holidays for 2019 (thanks to Hank Liu).
+- Added missing Hong Kong holiday (thanks to GitHub user `CarrieMY`).
 
-- Added two newly announced holidays to Chinese calendar (thanks to
-  Cheng Li).
+- Added a couple of one-off closing days to the Romanian calendar.
 
-- Updated Japan calendar (thanks to Eisuke Tani).
+- Added a one-off holiday to South Korean calendar (thanks to GitHub
+  user `fayce66`).
 
-- Fixed New Year's day adjustment for Canadian calendar (thanks to Roy
-  Zywina).
+- Added a missing holiday to Turkish calendar (thanks to Berat
+  Postalcioglu).
 
-- Added a couple of exceptions for UK bank holidays (thanks to GitHub
-  user Vililikku for the heads-up).
+Documentation
+-------------
 
-- Added French calendar (thanks to GitHub user NJeanray).
-
-- Added public methods to expose a calendar's added and removed
-  holidays (thanks to Francois Botha).
-
-- Allow the stub date of a schedule to equal the maturity.
-
+- Added basic documentation to optimization methods (thanks to GitHub
+  user `martinbrose`).
 
 Deprecated features
 -------------------
 
-- Deprecated a constructor of the SwaptionVolatilityMatrix class that
-  didn't take a calendar.
-
-- Removed typedefs GammaDistribution, ChiSquareDistribution,
-  NonCentralChiSquareDistribution and
-  InverseNonCentralChiSquareDistribution, deprecated in version 1.12.
-  Use CumulativeGammaDistribution, CumulativeChiSquareDistribution,
-  NonCentralCumulativeChiSquareDistribution and
-  InverseNonCentralCumulativeChiSquareDistribution instead.
-
-- Removed Actual365NoLeap class, deprecated in version 1.11.  It was
-  folded into Actual365Fixed.
-
-Term structures
----------------
-
-- Take payment days into account when calculating the nodes of a
-  bootstrapped curve based on overnight swaps.
+- Features deprecate in version 1.16 were removed: a constructor of
+  the `FdmOrnsteinUhlenbeckOp` class and a constructor of the
+  `SwaptionVolatilityMatrix` class.

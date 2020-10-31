@@ -41,7 +41,7 @@ using namespace QuantLib;
 #if defined(QL_ENABLE_SESSIONS)
 namespace QuantLib {
 
-    Integer sessionId() { return 0; }
+    ThreadKey sessionId() { return 0; }
 
 }
 #endif
@@ -158,8 +158,6 @@ int main(int, char* []) {
         DayCounter termStructureDayCounter =
             ActualActual(ActualActual::ISDA);
 
-        double tolerance = 1.0e-15;
-
         // A FRA curve
         std::vector<ext::shared_ptr<RateHelper> > fraInstruments;
 
@@ -172,8 +170,7 @@ int main(int, char* []) {
         ext::shared_ptr<YieldTermStructure> fraTermStructure(
                      new PiecewiseYieldCurve<Discount,LogLinear>(
                                          settlementDate, fraInstruments,
-                                         termStructureDayCounter,
-                                         tolerance));
+                                         termStructureDayCounter));
 
 
         // Term structures used for pricing/discounting

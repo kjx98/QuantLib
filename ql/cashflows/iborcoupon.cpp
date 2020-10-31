@@ -30,6 +30,26 @@
 
 namespace QuantLib {
 
+    bool IborCoupon::constructorWasNotCalled_ = true;
+
+#ifndef QL_USE_INDEXED_COUPON
+    bool IborCoupon::usingAtParCoupons_ = true;
+#else
+    bool IborCoupon::usingAtParCoupons_ = false;
+#endif
+
+    void IborCoupon::createAtParCoupons() {
+        QL_ASSERT(constructorWasNotCalled_,
+                  "Cannot call this method after the first IborCoupon was created.");
+        usingAtParCoupons_ = true;
+    }
+
+    void IborCoupon::createIndexedCoupons() {
+        QL_ASSERT(constructorWasNotCalled_,
+                  "Cannot call this method after the first IborCoupon was created.");
+        usingAtParCoupons_ = false;
+    }
+
     IborCoupon::IborCoupon(const Date& paymentDate,
                            Real nominal,
                            const Date& startDate,
@@ -48,6 +68,7 @@ namespace QuantLib {
                          refPeriodStart, refPeriodEnd,
                          dayCounter, isInArrears, exCouponDate),
       iborIndex_(iborIndex) {
+        constructorWasNotCalled_ = false;
 
         fixingDate_ = fixingDate();
 
@@ -57,18 +78,20 @@ namespace QuantLib {
         fixingValueDate_ = fixingCalendar.advance(
             fixingDate_, indexFixingDays, Days);
 
-        #ifdef QL_USE_INDEXED_COUPON
-        fixingEndDate_ = index_->maturityDate(fixingValueDate_);
-        #else
-        if (isInArrears_)
+        if (usingAtParCoupons_) {
+            if (isInArrears_)
+                fixingEndDate_ = index_->maturityDate(fixingValueDate_);
+            else { // par coupon approximation
+                Date nextFixingDate = fixingCalendar.advance(
+                    accrualEndDate_, -static_cast<Integer>(fixingDays_), Days);
+                fixingEndDate_ = fixingCalendar.advance(
+                    nextFixingDate, indexFixingDays, Days);
+                // make sure the estimation period contains at least one day
+                fixingEndDate_ = std::max(fixingEndDate_, fixingValueDate_ + 1);
+            }
+        } else {
             fixingEndDate_ = index_->maturityDate(fixingValueDate_);
-        else { // par coupon approximation
-            Date nextFixingDate = fixingCalendar.advance(
-                accrualEndDate_, -static_cast<Integer>(fixingDays_), Days);
-            fixingEndDate_ = fixingCalendar.advance(
-                nextFixingDate, indexFixingDays, Days);
         }
-        #endif
 
         const DayCounter& dc = index_->dayCounter();
         spanningTime_ = dc.yearFraction(fixingValueDate_,

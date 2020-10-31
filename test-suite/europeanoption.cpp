@@ -31,7 +31,6 @@
 #include <ql/pricingengines/vanilla/binomialengine.hpp>
 #include <ql/pricingengines/vanilla/fdblackscholesvanillaengine.hpp>
 #include <ql/experimental/variancegamma/fftvanillaengine.hpp>
-#include <ql/pricingengines/vanilla/fdeuropeanengine.hpp>
 #include <ql/pricingengines/vanilla/mceuropeanengine.hpp>
 #include <ql/pricingengines/vanilla/integralengine.hpp>
 #include <ql/termstructures/yield/flatforward.hpp>
@@ -45,6 +44,7 @@
 using namespace QuantLib;
 using namespace boost::unit_test_framework;
 
+#undef REPORT_FAILURE
 #define REPORT_FAILURE(greekName, payoff, exercise, s, q, r, today, \
                        v, expected, calculated, error, tolerance) \
     BOOST_ERROR(exerciseTypeToString(exercise) << " " \
@@ -62,7 +62,7 @@ using namespace boost::unit_test_framework;
                << "    error:            " << error << "\n" \
                << "    tolerance:        " << tolerance);
 
-namespace {
+namespace european_option_test {
 
     // utilities
 
@@ -198,6 +198,8 @@ void EuropeanOptionTest::testValues() {
 
     BOOST_TEST_MESSAGE("Testing European option values...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     /* The data below are from
@@ -319,6 +321,8 @@ void EuropeanOptionTest::testValues() {
 void EuropeanOptionTest::testGreekValues() {
 
     BOOST_TEST_MESSAGE("Testing European option greek values...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -609,6 +613,8 @@ void EuropeanOptionTest::testGreeks() {
 
     BOOST_TEST_MESSAGE("Testing analytic European option greeks...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     std::map<std::string,Real> calculated, expected, tolerance;
@@ -769,6 +775,8 @@ void EuropeanOptionTest::testGreeks() {
 void EuropeanOptionTest::testImpliedVol() {
 
     BOOST_TEST_MESSAGE("Testing European option implied volatility...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -974,11 +982,13 @@ void EuropeanOptionTest::testImpliedVolContainment() {
 
 namespace {
 
-    void testEngineConsistency(EngineType engine,
+    void testEngineConsistency(european_option_test::EngineType engine,
                                Size binomialSteps,
                                Size samples,
                                std::map<std::string,Real> tolerance,
                                bool testGreeks = false) {
+
+        using namespace european_option_test;
 
         std::map<std::string,Real> calculated, expected;
 
@@ -1080,6 +1090,8 @@ void EuropeanOptionTest::testJRBinomialEngines() {
     BOOST_TEST_MESSAGE("Testing JR binomial European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = JR;
@@ -1097,6 +1109,8 @@ void EuropeanOptionTest::testCRRBinomialEngines() {
 
     BOOST_TEST_MESSAGE("Testing CRR binomial European engines "
                        "against analytic results...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -1116,6 +1130,8 @@ void EuropeanOptionTest::testEQPBinomialEngines() {
     BOOST_TEST_MESSAGE("Testing EQP binomial European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = EQP;
@@ -1133,6 +1149,8 @@ void EuropeanOptionTest::testTGEOBinomialEngines() {
 
     BOOST_TEST_MESSAGE("Testing TGEO binomial European engines "
                        "against analytic results...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -1152,6 +1170,8 @@ void EuropeanOptionTest::testTIANBinomialEngines() {
     BOOST_TEST_MESSAGE("Testing TIAN binomial European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = TIAN;
@@ -1169,6 +1189,8 @@ void EuropeanOptionTest::testLRBinomialEngines() {
 
     BOOST_TEST_MESSAGE("Testing LR binomial European engines "
                        "against analytic results...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -1188,6 +1210,8 @@ void EuropeanOptionTest::testJOSHIBinomialEngines() {
     BOOST_TEST_MESSAGE("Testing Joshi binomial European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = JOSHI;
@@ -1206,6 +1230,8 @@ void EuropeanOptionTest::testFdEngines() {
     BOOST_TEST_MESSAGE("Testing finite-difference European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = FiniteDifferences;
@@ -1223,6 +1249,8 @@ void EuropeanOptionTest::testIntegralEngines() {
 
     BOOST_TEST_MESSAGE("Testing integral engines against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = Integral;
@@ -1237,6 +1265,8 @@ void EuropeanOptionTest::testMcEngines() {
 
     BOOST_TEST_MESSAGE("Testing Monte Carlo European engines "
                        "against analytic results...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -1253,6 +1283,8 @@ void EuropeanOptionTest::testQmcEngines() {
     BOOST_TEST_MESSAGE("Testing Quasi Monte Carlo European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = QuasiMonteCarlo;
@@ -1268,6 +1300,8 @@ void EuropeanOptionTest::testFFTEngines() {
     BOOST_TEST_MESSAGE("Testing FFT European engines "
                        "against analytic results...");
 
+    using namespace european_option_test;
+
     SavedSettings backup;
 
     EngineType engine = FFT;
@@ -1281,6 +1315,8 @@ void EuropeanOptionTest::testFFTEngines() {
 
 void EuropeanOptionTest::testLocalVolatility() {
     BOOST_TEST_MESSAGE("Testing finite-differences with local volatility...");
+
+    using namespace european_option_test;
 
     SavedSettings backup;
 
@@ -1347,7 +1383,13 @@ void EuropeanOptionTest::testLocalVolatility() {
     const ext::shared_ptr<GeneralizedBlackScholesProcess> process =
                                               makeProcess(s0, qTS, rTS,volTS);
     
-    for (Size i=2; i < dates.size(); ++i) {
+    const std::pair<FdmSchemeDesc, std::string> schemeDescs[]= {
+        std::make_pair(FdmSchemeDesc::Douglas(), "Douglas"),
+        std::make_pair(FdmSchemeDesc::CrankNicolson(), "Crank-Nicolson"),
+        std::make_pair(FdmSchemeDesc::ModifiedCraigSneyd(), "Mod. Craig-Sneyd")
+    };
+
+    for (Size i=2; i < dates.size(); i+=2) {
         for (Size j=3; j < strikes.size()-5; j+=5) {
             const Date& exDate = dates[i];
             const ext::shared_ptr<StrikedTypePayoff> payoff(new
@@ -1397,17 +1439,20 @@ void EuropeanOptionTest::testLocalVolatility() {
             
             // check local vol pricing
             // delta/gamma are not the same by definition (model implied greeks)
-            option.setPricingEngine(ext::shared_ptr<PricingEngine>(
-                    new FdBlackScholesVanillaEngine(process, 25, 400, 0, 
-                                                    FdmSchemeDesc::Douglas(), 
-                                                    true, 0.35)));
-            calculatedNPV = option.NPV();
-            if (std::fabs(expectedNPV - calculatedNPV) > tol*expectedNPV) {
-                BOOST_FAIL("Failed to reproduce local vol option price for "
-                           << "\n    strike:     " << payoff->strike()
-                           << "\n    maturity:   " << exDate
-                           << "\n    calculated: " << calculatedNPV
-                           << "\n    expected:   " << expectedNPV);
+            for (Size i=0; i < LENGTH(schemeDescs); ++i) {
+                option.setPricingEngine(
+                    ext::make_shared<FdBlackScholesVanillaEngine>(
+                        process, 25, 100, 0, schemeDescs[i].first, true, 0.35));
+
+                calculatedNPV = option.NPV();
+                if (std::fabs(expectedNPV - calculatedNPV) > tol*expectedNPV) {
+                    BOOST_FAIL("Failed to reproduce local vol option price for "
+                               << "\n    strike:     " << payoff->strike()
+                               << "\n    maturity:   " << exDate
+                               << "\n    calculated: " << calculatedNPV
+                               << "\n    expected:   " << expectedNPV
+                               << "\n    scheme:     " << schemeDescs[i].second);
+                }
             }
         }
     }
@@ -1488,9 +1533,13 @@ void EuropeanOptionTest::testPDESchemes() {
         ext::make_shared<AnalyticEuropeanEngine>(process);
 
     // Crank-Nicolson and Douglas scheme are the same in one dimension
-    const ext::shared_ptr<PricingEngine> crankNicolson =
+    const ext::shared_ptr<PricingEngine> douglas =
         ext::make_shared<FdBlackScholesVanillaEngine>(
             process, 15, 100, 0, FdmSchemeDesc::Douglas());
+
+    const ext::shared_ptr<PricingEngine> crankNicolson =
+        ext::make_shared<FdBlackScholesVanillaEngine>(
+            process, 15, 100, 0, FdmSchemeDesc::CrankNicolson());
 
     const ext::shared_ptr<PricingEngine> implicitEuler =
         ext::make_shared<FdBlackScholesVanillaEngine>(
@@ -1520,7 +1569,9 @@ void EuropeanOptionTest::testPDESchemes() {
         ext::make_shared<FdBlackScholesVanillaEngine>(
             process, 15, 100, 0, FdmSchemeDesc::TrBDF2());
 
+
     const std::pair<ext::shared_ptr<PricingEngine>, std::string> engines[]= {
+        std::make_pair(douglas, "Douglas"),
         std::make_pair(crankNicolson, "Crank-Nicolson"),
         std::make_pair(implicitEuler, "Implicit-Euler"),
         std::make_pair(explicitEuler, "Explicit-Euler"),
@@ -1589,6 +1640,28 @@ void EuropeanOptionTest::testPDESchemes() {
                        << "\n    tolerance:  " << tol);
         }
     }
+
+    // make sure that Douglas and Crank-Nicolson are giving the same result
+    const Size idxDouglas = std::distance(engines,
+        std::find(engines, engines + LENGTH(engines),
+            std::make_pair(douglas, std::string("Douglas"))));
+    const Real douglasNPV = dividendPrices[idxDouglas];
+
+    const Size idxCrankNicolson = std::distance(engines,
+        std::find(engines, engines + LENGTH(engines),
+            std::make_pair(crankNicolson, std::string("Crank-Nicolson"))));
+    const Real crankNicolsonNPV = dividendPrices[idxCrankNicolson];
+
+    const Real schemeTol = 1e-12;
+    const Real schemeDiff = std::fabs(crankNicolsonNPV - douglasNPV);
+    if (schemeDiff > schemeTol) {
+        BOOST_FAIL("Failed to reproduce Douglas scheme option values "
+                "with the Crank-Nicolson PDE scheme "
+                   << "\n    Dougles NPV:        " << douglasNPV
+                   << "\n    Crank-Nicolson NPV: " << crankNicolsonNPV
+                   << "\n    difference:         " << schemeDiff
+                   << "\n    tolerance:          " << schemeTol);
+    }
 }
 
 void EuropeanOptionTest::testFdEngineWithNonConstantParameters() {
@@ -1648,7 +1721,73 @@ void EuropeanOptionTest::testFdEngineWithNonConstantParameters() {
     }
 }
 
+void EuropeanOptionTest::testDouglasVsCrankNicolson() {
+    BOOST_TEST_MESSAGE("Testing Douglas vs Crank-Nicolson scheme "
+                        "for finite-difference European PDE engines...");
 
+    SavedSettings backup;
+
+    const DayCounter dc = Actual365Fixed();
+    const Date today = Date(5, October, 2018);
+
+    Settings::instance().evaluationDate() = today;
+
+    const Handle<Quote> spot(ext::make_shared<SimpleQuote>(100.0));
+    const Handle<YieldTermStructure> qTS(flatRate(today, 0.02, dc));
+    const Handle<YieldTermStructure> rTS(flatRate(today, 0.075, dc));
+    const Handle<BlackVolTermStructure> volTS(flatVol(today, 0.25, dc));
+
+    const ext::shared_ptr<BlackScholesMertonProcess> process =
+        ext::make_shared<BlackScholesMertonProcess>(
+            spot, qTS, rTS, volTS);
+
+    VanillaOption option(
+        ext::make_shared<PlainVanillaPayoff>(Option::Put, spot->value()+2),
+        ext::make_shared<EuropeanExercise>(today + Period(6, Months)));
+
+    option.setPricingEngine(
+        ext::make_shared<AnalyticEuropeanEngine>(process));
+
+    const Real npv = option.NPV();
+    const Real schemeTol = 1e-12;
+    const Real npvTol = 1e-2;
+
+    for (Real theta = 0.2; theta < 0.81; theta+=0.1) {
+        option.setPricingEngine(
+            ext::make_shared<FdBlackScholesVanillaEngine>(
+                process, 500, 100, 0,
+                FdmSchemeDesc(FdmSchemeDesc::CrankNicolsonType, theta, 0.0)));
+        const Real crankNicolsonNPV = option.NPV();
+
+        const Real npvDiff = std::fabs(crankNicolsonNPV - npv);
+        if (npvDiff > npvTol) {
+            BOOST_FAIL("Failed to reproduce european option values "
+                    "with the Crank-Nicolson PDE scheme "
+                       << "\n    Analytic NPV:       " << npv
+                       << "\n    Crank-Nicolson NPV: " << crankNicolsonNPV
+                       << "\n    theta:              " << theta
+                       << "\n    difference:         " << npvDiff
+                       << "\n    tolerance:          " << npvTol);
+        }
+
+        option.setPricingEngine(
+            ext::make_shared<FdBlackScholesVanillaEngine>(
+                process, 500, 100, 0,
+                FdmSchemeDesc(FdmSchemeDesc::DouglasType, theta, 0.0)));
+        const Real douglasNPV = option.NPV();
+
+        const Real schemeDiff = std::fabs(crankNicolsonNPV - douglasNPV);
+
+        if (schemeDiff > schemeTol) {
+            BOOST_FAIL("Failed to reproduce Douglas scheme option values "
+                    "with the Crank-Nicolson PDE scheme "
+                       << "\n    Dougles NPV:        " << douglasNPV
+                       << "\n    Crank-Nicolson NPV: " << crankNicolsonNPV
+                       << "\n    difference:         " << schemeDiff
+                       << "\n    tolerance:          " << schemeTol);
+        }
+    }
+}
 
 test_suite* EuropeanOptionTest::suite() {
     test_suite* suite = BOOST_TEST_SUITE("European option tests");
@@ -1680,6 +1819,9 @@ test_suite* EuropeanOptionTest::suite() {
     suite->add(QUANTLIB_TEST_CASE(&EuropeanOptionTest::testPDESchemes));
     suite->add(QUANTLIB_TEST_CASE(
                  &EuropeanOptionTest::testFdEngineWithNonConstantParameters));
+    suite->add(QUANTLIB_TEST_CASE(
+                 &EuropeanOptionTest::testDouglasVsCrankNicolson));
+
     return suite;
 }
 

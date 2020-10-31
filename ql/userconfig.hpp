@@ -54,7 +54,7 @@
 #endif
 
 /* Define this to use indexed coupons instead of par coupons in floating
-   legs. */
+   legs as the default in 'static bool IborCoupon::usingAtParCoupons();'. */
 #ifndef QL_USE_INDEXED_COUPON
 //#   define QL_USE_INDEXED_COUPON
 #endif
@@ -100,6 +100,13 @@
    compiler's standard to at least C++11. */
 #ifndef QL_USE_STD_FUNCTION
 //#    define QL_USE_STD_FUNCTION
+#endif
+
+/* Define this to use std::tuple instead of
+   boost::function and boost::bind.  This requires you to set your
+   compiler's standard to at least C++11. */
+#ifndef QL_USE_STD_TUPLE
+//#    define QL_USE_STD_TUPLE
 #endif
 
 /* Define this to enable the parallel unit test runner */

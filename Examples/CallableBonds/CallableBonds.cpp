@@ -42,7 +42,7 @@ using namespace QuantLib;
 
 #if defined(QL_ENABLE_SESSIONS)
 namespace QuantLib {
-    Integer sessionId() { return 0; }
+    ThreadKey sessionId() { return 0; }
 }
 #endif
 
@@ -123,11 +123,10 @@ int main(int, char* [])
         for (Size i=0; i< numberOfCallDates; i++) {
             Calendar nullCalendar = NullCalendar();
 
-            Callability::Price myPrice(callPrice,
-                                       Callability::Price::Clean);
+            Bond::Price myPrice(callPrice, Bond::Price::Clean);
             callSchedule.push_back(
                 ext::make_shared<Callability>(
-                    myPrice,
+                                    myPrice,
                                     Callability::Call,
                                     callDate ));
             callDate = nullCalendar.advance(callDate, 3, Months);
